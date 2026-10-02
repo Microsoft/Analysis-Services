@@ -45,19 +45,27 @@ Following these steps will automatically load the Best Practice Rules into your 
 3. Run the following code in the [Advanced Scripting](https://docs.tabulareditor.com/Advanced-Scripting.html "Advanced Scripting") window.
 
 ```C#  
-System.Net.WebClient w = new System.Net.WebClient(); 
+System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+System.Net.WebClient w = new System.Net.WebClient();
 
-string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+string appData = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+string majorVersion = System.Windows.Forms.Application.ProductVersion.Substring(0, 1);
+
+string targetFolder = (majorVersion == "3") 
+    ? System.IO.Path.Combine(appData, "TabularEditor3") 
+    : System.IO.Path.Combine(appData, "TabularEditor");
+
+string filePath = System.IO.Path.Combine(targetFolder, "BPARules.json");
 string url = "https://raw.githubusercontent.com/microsoft/Analysis-Services/master/BestPracticeRules/BPARules.json";
-string version = System.Windows.Forms.Application.ProductVersion.Substring(0,1);
-string downloadLoc = path+@"\TabularEditor\BPARules.json";
 
-if (version == "3")
+if (!System.IO.Directory.Exists(targetFolder))
 {
-    downloadLoc = path+@"\TabularEditor3\BPARules.json";
+    System.IO.Directory.CreateDirectory(targetFolder);
 }
 
-w.DownloadFile(url, downloadLoc);
+w.DownloadFile(url, filePath);
+
+Info("BPA rules successfully downloaded to:\n" + filePath + "\n\nRestart Tabular Editor to apply changes.");
 ```
 
 *Note: If you want to load the rules in Italian, Japanese or Spanish, replace the url parameter in the code above with the appropriate code below.*
