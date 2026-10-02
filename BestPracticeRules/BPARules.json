@@ -128,7 +128,7 @@
     "Description": "Try to simplify the DAX used for row level security. Usage of the functions within this rule can likely be offloaded to the upstream systems (data warehouse).",
     "Severity": 2,
     "Scope": "Table, CalculatedTable",
-    "Expression": "RowLevelSecurity.Any(RegEx.IsMatch(it.Replace(\" \",\"\"),\"(?i)RIGHT\\s*\\(\"))\r\nor\r\nRowLevelSecurity.Any(RegEx.IsMatch(it.Replace(\" \",\"\"),\"(?i)LEFT\\s*\\(\"))\r\nor\r\nRowLevelSecurity.Any(RegEx.IsMatch(it.Replace(\" \",\"\"),\"(?i)UPPER\\s*\\(\"))\r\nor\r\nRowLevelSecurity.Any(RegEx.IsMatch(it.Replace(\" \",\"\"),\"(?i)LOWER\\s*\\(\"))\r\nor\r\nRowLevelSecurity.Any(RegEx.IsMatch(it.Replace(\" \",\"\"),\"(?i)FIND\\s*\\(\"))\r\n",
+    "Expression": "RowLevelSecurity.Any(RegEx.IsMatch(it.Replace(\" \",\"\"),\"(?i)RIGHT\\s*\\(\"))\ror\r\nRowLevelSecurity.Any(RegEx.IsMatch(it.Replace(\" \",\"\"),\"(?i)LEFT\\s*\\(\"))\ror\r\nRowLevelSecurity.Any(RegEx.IsMatch(it.Replace(\" \",\"\"),\"(?i)UPPER\\s*\\(\"))\ror\r\nRowLevelSecurity.Any(RegEx.IsMatch(it.Replace(\" \",\"\"),\"(?i)LOWER\\s*\\(\"))\ror\r\nRowLevelSecurity.Any(RegEx.IsMatch(it.Replace(\" \",\"\"),\"(?i)FIND\\s*\\(\"))\r\n",
     "CompatibilityLevel": 1200
   },
   {
@@ -138,7 +138,7 @@
     "Description": "If using Direct Query in Power BI Premium, you may want to consider using aggregations in order to boost performance.\r\nReference: https://docs.microsoft.com/power-bi/transform-model/desktop-aggregations",
     "Severity": 1,
     "Scope": "Model",
-    "Expression": "Tables.Any(ObjectTypeName == \"Table (DirectQuery)\")\r\nand\r\n\n\nAllColumns.Any(AlternateOf != null) == false\r\nand \r\nDefaultPowerBIDataSourceVersion.ToString() == \"PowerBI_V3\"",
+    "Expression": "Tables.Any(ObjectTypeName == \"Table (DirectQuery)\")\rand\r\n\n\nAllColumns.Any(AlternateOf != null) == false\rand \r\nDefaultPowerBIDataSourceVersion.ToString() == \"PowerBI_V3\"",
     "CompatibilityLevel": 1200
   },
   {
@@ -148,7 +148,7 @@
     "Description": "Minimize Power Query transformations in order to improve model processing performance. It is a best practice to offload these transformations to the data warehouse if possible. Also, please check whether query folding is occurring within your model. Please reference the article below for more information on query folding.\r\nReference: https://docs.microsoft.com/power-query/power-query-folding",
     "Severity": 2,
     "Scope": "Partition",
-    "Expression": "\nSourceType.ToString() = \"M\"\r\nand\r\n(\r\nQuery.Contains(\"Table.Combine(\")\r\nor\r\n\nQuery.Contains(\"Table.Join(\")\r\nor\r\n\nQuery.Contains(\"Table.NestedJoin(\")\r\nor\r\nQuery.Contains(\"Table.AddColumn(\")\r\nor\r\nQuery.Contains(\"Table.Group(\")\r\nor\r\nQuery.Contains(\"Table.Sort(\")\r\nor\r\nQuery.Contains(\"Table.Pivot(\")\r\nor\r\nQuery.Contains(\"Table.Unpivot(\")\r\nor\r\nQuery.Contains(\"Table.UnpivotOtherColumns(\")\r\nor\r\nQuery.Contains(\"Table.Distinct(\")\r\nor\r\nQuery.Contains(\"[Query=\"\"SELECT\")\r\nor\r\nQuery.Contains(\"Value.NativeQuery\")\r\nor\r\nQuery.Contains(\"OleDb.Query\")\r\nor\r\nQuery.Contains(\"Odbc.Query\")\r\n)",
+    "Expression": "\nSourceType.ToString() = \"M\"\rand\r\n(\r\nQuery.Contains(\"Table.Combine(\")\ror\r\n\nQuery.Contains(\"Table.Join(\")\ror\r\n\nQuery.Contains(\"Table.NestedJoin(\")\ror\r\nQuery.Contains(\"Table.AddColumn(\")\ror\r\nQuery.Contains(\"Table.Group(\")\ror\r\nQuery.Contains(\"Table.Sort(\")\ror\r\nQuery.Contains(\"Table.Pivot(\")\ror\r\nQuery.Contains(\"Table.Unpivot(\")\ror\r\nQuery.Contains(\"Table.UnpivotOtherColumns(\")\ror\r\nQuery.Contains(\"Table.Distinct(\")\ror\r\nQuery.Contains(\"[Query=\"\"SELECT\")\ror\r\nQuery.Contains(\"Value.NativeQuery\")\ror\r\nQuery.Contains(\"OleDb.Query\")\ror\r\nQuery.Contains(\"Odbc.Query\")\r\n)",
     "CompatibilityLevel": 1200
   },
   {
@@ -158,11 +158,11 @@
     "Description": "Using many-to-many relationships on tables which use dynamic row level security can cause serious query performance degradation. This pattern's performance problems compound when snowflaking multiple many-to-many relationships against a table which contains row level security. Instead, use one of the patterns shown in the article below where a single dimension table relates many-to-one to a security table.\r\n\r\nReference: https://www.elegantbi.com/post/dynamicrlspatterns",
     "Severity": 3,
     "Scope": "Table",
-    "Expression": "UsedInRelationships.Any(FromCardinality == \"Many\" and ToCardinality== \"Many\")\r\nand\r\nRowLevelSecurity.Any(it.Length > 0)",
+    "Expression": "UsedInRelationships.Any(FromCardinality == \"Many\" and ToCardinality== \"Many\")\rand\r\nRowLevelSecurity.Any(it.Length > 0)",
     "CompatibilityLevel": 1200
   },
   {
-    "ID": "UNPIVOT_PIVOTED_(MONTH)_DATA",
+    "ID": "UNPIVOT_PIVOTED(MONTH)_DATA",
     "Name": "[Performance] Unpivot pivoted (month) data",
     "Category": "Performance",
     "Description": "Avoid using pivoted data in your tables. This rule checks specifically for pivoted data by month.\r\nReference: https://www.elegantbi.com/post/top10bestpractices",
@@ -177,7 +177,7 @@
     "Category": "Performance",
     "Severity": 2,
     "Scope": "Relationship",
-    "Expression": "FromCardinality == \"Many\"\n\r\nand\r\n\nToCardinality == \"Many\"\r\n\nand\r\n\nCrossFilteringBehavior == \"BothDirections\"",
+    "Expression": "FromCardinality == \"Many\"\n\rand\r\n\nToCardinality == \"Many\"\r\n\nand\r\n\nCrossFilteringBehavior == \"BothDirections\"",
     "CompatibilityLevel": 1200
   },
   {
@@ -197,7 +197,7 @@
     "Description": "Removing unnecessary columns reduces model size and speeds up data loading.",
     "Severity": 2,
     "Scope": "DataColumn, CalculatedColumn, CalculatedTableColumn",
-    "Expression": "UsedInRelationships.Any() == false \r\nand\r\nModel.AllColumns.Any(Name == current.Name and Table.Name != current.Table.Name and Table.UsedInRelationships.Any(FromTable.Name == current.Table.Name))",
+    "Expression": "UsedInRelationships.Any() == false \rand\r\nModel.AllColumns.Any(Name == current.Name and Table.Name != current.Table.Name and Table.UsedInRelationships.Any(FromTable.Name == current.Table.Name))",
     "CompatibilityLevel": 1200
   },
   {
@@ -207,7 +207,7 @@
     "Description": "At present, time intelligence functions are known to not perform as well when using Direct Query. If you are having performance issues, you may want to try alternative solutions such as adding columns in the fact table that show previous year or previous month data.",
     "Severity": 2,
     "Scope": "Measure, CalculationItem",
-    "Expression": "Model.Tables.Any(ObjectTypeName == \"Table (DirectQuery)\")\r\nand\r\n(\r\nRegEx.IsMatch(Expression,\"CLOSINGBALANCEMONTH\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"CLOSINGBALANCEQUARTER\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"CLOSINGBALANCEYEAR\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"DATEADD\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"DATESBETWEEN\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"DATESINPERIOD\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"DATESMTD\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"DATESQTD\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"DATESYTD\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"ENDOFMONTH\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"ENDOFQUARTER\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"ENDOFYEAR\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"FIRSTDATE\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"FIRSTNONBLANK\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"FIRSTNONBLANKVALUE\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"LASTDATE\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"LASTNONBLANK\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"LASTNONBLANKVALUE\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"NEXTDAY\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"NEXTMONTH\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"NEXTQUARTER\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"NEXTYEAR\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"OPENINGBALANCEMONTH\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"OPENINGBALANCEQUARTER\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"OPENINGBALANCEYEAR\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"PARALLELPERIOD\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"PREVIOUSDAY\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"PREVIOUSMONTH\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"PREVIOUSQUARTER\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"PREVIOUSYEAR\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"SAMEPERIODLASTYEAR\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"STARTOFMONTH\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"STARTOFQUARTER\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"STARTOFYEAR\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"TOTALMTD\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"TOTALQTD\\s*\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"TOTALYTD\\s*\\(\")\r\n)",
+    "Expression": "Model.Tables.Any(ObjectTypeName == \"Table (DirectQuery)\")\rand\r\n(\r\nRegEx.IsMatch(Expression,\"CLOSINGBALANCEMONTH\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"CLOSINGBALANCEQUARTER\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"CLOSINGBALANCEYEAR\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"DATEADD\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"DATESBETWEEN\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"DATESINPERIOD\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"DATESMTD\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"DATESQTD\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"DATESYTD\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"ENDOFMONTH\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"ENDOFQUARTER\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"ENDOFYEAR\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"FIRSTDATE\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"FIRSTNONBLANK\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"FIRSTNONBLANKVALUE\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"LASTDATE\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"LASTNONBLANK\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"LASTNONBLANKVALUE\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"NEXTDAY\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"NEXTMONTH\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"NEXTQUARTER\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"NEXTYEAR\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"OPENINGBALANCEMONTH\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"OPENINGBALANCEQUARTER\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"OPENINGBALANCEYEAR\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"PARALLELPERIOD\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"PREVIOUSDAY\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"PREVIOUSMONTH\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"PREVIOUSQUARTER\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"PREVIOUSYEAR\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"SAMEPERIODLASTYEAR\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"STARTOFMONTH\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"STARTOFQUARTER\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"STARTOFYEAR\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"TOTALMTD\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"TOTALQTD\\s*\\(\")\ror\r\nRegEx.IsMatch(Expression,\"TOTALYTD\\s*\\(\")\r\n)",
     "CompatibilityLevel": 1200
   },
   {
@@ -227,7 +227,7 @@
     "Description": "Bi-directional and many-to-many relationships may cause performance degradation or even have unintended consequences. Make sure to check these specific relationships to ensure they are working as designed and are actually necessary.\r\nReference: https://www.sqlbi.com/articles/bidirectional-relationships-and-ambiguity-in-dax/",
     "Severity": 1,
     "Scope": "Relationship",
-    "Expression": "FromCardinality.ToString() = \"Many\" and ToCardinality.ToString() = \"Many\"\r\nor\r\nCrossFilteringBehavior == CrossFilteringBehavior.BothDirections",
+    "Expression": "FromCardinality.ToString() = \"Many\" and ToCardinality.ToString() = \"Many\"\ror\r\nCrossFilteringBehavior == CrossFilteringBehavior.BothDirections",
     "CompatibilityLevel": 1200
   },
   {
@@ -237,7 +237,7 @@
     "Description": "Usage of dynamic row level security (RLS) can add memory and performance overhead. Please research the pros/cons of using it.\r\nReference: https://docs.microsoft.com/power-bi/admin/service-admin-rls",
     "Severity": 1,
     "Scope": "TablePermission",
-    "Expression": "RegEx.IsMatch(Expression,\"(?i)USERNAME\\(\")\r\nor\r\nRegEx.IsMatch(Expression,\"(?i)USERPRINCIPALNAME\\(\")",
+    "Expression": "RegEx.IsMatch(Expression,\"(?i)USERNAME\\(\")\ror\r\nRegEx.IsMatch(Expression,\"(?i)USERPRINCIPALNAME\\(\")",
     "CompatibilityLevel": 1200
   },
   {
@@ -287,7 +287,7 @@
     "Description": "Use the DIVIDE  function instead of using \"/\". The DIVIDE function resolves divide-by-zero cases. As such, it is recommended to use to avoid errors.\r\n\r\nReference: https://docs.microsoft.com/power-bi/guidance/dax-divide-function-operator",
     "Severity": 2,
     "Scope": "Measure, CalculatedColumn, CalculationItem",
-    "Expression": "RegEx.IsMatch(Expression,\"\\]\\s*\\/(?!\\/)(?!\\*)\")\r\nor\r\nRegEx.IsMatch(Expression,\"\\)\\s*\\/(?!\\/)(?!\\*)\")",
+    "Expression": "RegEx.IsMatch(Expression,\"\\]\\s*\\/(?!\\/)(?!\\*)\")\ror\r\nRegEx.IsMatch(Expression,\"\\)\\s*\\/(?!\\/)(?!\\*)\")",
     "CompatibilityLevel": 1200
   },
   {
@@ -317,7 +317,7 @@
     "Description": "Instead of using this pattern FILTER('Table','Table'[Column]=\"Value\") for the filter parameters of a CALCULATE or CALCULATETABLE function, use one of the options below. As far as whether to use the KEEPFILTERS function, see the second reference link below.\r\n\r\nOption 1: KEEPFILTERS('Table'[Column]=\"Value\")\r\nOption 2: 'Table'[Column]=\"Value\"\r\n\r\nReference: https://docs.microsoft.com/power-bi/guidance/dax-avoid-avoid-filter-as-filter-argument\r\nReference: https://www.sqlbi.com/articles/using-keepfilters-in-dax/",
     "Severity": 2,
     "Scope": "Measure, CalculatedColumn, CalculationItem",
-    "Expression": "RegEx.IsMatch(Expression,\"(?i)CALCULATE\\s*\\(\\s*[^,]+,\\s*(?i)FILTER\\s*\\(\\s*\\'*[A-Za-z0-9 _]+'*\\s*,\\s*\\'*[A-Za-z0-9 _]+\\'*\\[[A-Za-z0-9 _]+\\]\")\r\nor\r\nRegEx.IsMatch(Expression,\"(?i)CALCULATETABLE\\s*\\([^,]*,\\s*(?i)FILTER\\s*\\(\\s*\\'*[A-Za-z0-9 _]+\\'*,\\s*\\'*[A-Za-z0-9 _]+\\'*\\[[A-Za-z0-9 _]+\\]\")",
+    "Expression": "RegEx.IsMatch(Expression,\"(?i)CALCULATE\\s*\\(\\s*[^,]+,\\s*(?i)FILTER\\s*\\(\\s*'*[A-Za-z0-9 _]+'*\\s*,\\s*'*[A-Za-z0-9 _]+'*\\[[A-Za-z0-9 _]+\\]\")\ror\r\nRegEx.IsMatch(Expression,\"(?i)CALCULATETABLE\\s*\\([^,]*\\s*,\\s*(?i)FILTER\\s*\\(\\s*'*[A-Za-z0-9 _]+'*\\s*,\\s*'*[A-Za-z0-9 _]+'*\\[[A-Za-z0-9 _]+\\]\")",
     "CompatibilityLevel": 1200
   },
   {
@@ -327,7 +327,7 @@
     "Description": "Instead of using this pattern FILTER('Table',[Measure]>Value) for the filter parameters of a CALCULATE or CALCULATETABLE function, use one of the options below (if possible). Filtering on a specific column will produce a smaller table for the engine to process, thereby enabling faster performance. Using the VALUES function or the ALL function depends on the desired measure result.\r\n\r\nOption 1: FILTER(VALUES('Table'[Column]),[Measure] > Value)\r\nOption 2: FILTER(ALL('Table'[Column]),[Measure] > Value)\r\n\r\nReference: https://docs.microsoft.com/power-bi/guidance/dax-avoid-avoid-filter-as-filter-argument",
     "Severity": 2,
     "Scope": "Measure, CalculatedColumn, CalculationItem",
-    "Expression": "RegEx.IsMatch(Expression,\"(?i)CALCULATE\\s*\\(\\s*[^,]+,\\s*(?i)FILTER\\s*\\(\\s*\\'*[A-Za-z0-9 _]+\\'*\\s*,\\s*\\[[^\\]]+\\]\")\r\nor\r\nRegEx.IsMatch(Expression,\"(?i)CALCULATETABLE\\s*\\([^,]*,\\s*(?i)FILTER\\s*\\(\\s*\\'*[A-Za-z0-9 _]+\\'*,\\s*\\[\")",
+    "Expression": "RegEx.IsMatch(Expression,\"(?i)CALCULATE\\s*\\(\\s*[^,]+,\\s*(?i)FILTER\\s*\\(\\s*'*[A-Za-z0-9 _]+'*\\s*,\\s*\\[[^\\]]+\\]\")\ror\r\nRegEx.IsMatch(Expression,\"(?i)CALCULATETABLE\\s*\\([^,]*\\s*,\\s*(?i)FILTER\\s*\\(\\s*'*[A-Za-z0-9 _]+'*\\s*,\\s*\\[\")",
     "CompatibilityLevel": 1200
   },
   {
@@ -337,7 +337,7 @@
     "Description": "Inactive relationships are activated using the USERELATIONSHIP function. If an inactive relationship is not referenced in any measure via this function, the relationship will not be used. It should be determined whether the relationship is not necessary or to activate the relationship via this method.\r\n\r\nReference: https://docs.microsoft.com/power-bi/guidance/relationships-active-inactive\r\nReference: https://dax.guide/userelationship/",
     "Severity": 2,
     "Scope": "Relationship",
-    "Expression": "IsActive == false\r\nand not\r\n(\r\nModel.AllMeasures.Any(RegEx.IsMatch(Expression,\r\n\"(?i)USERELATIONSHIP\\s*\\(\\s*\\'*\" +\r\ncurrent.FromTable.Name + \"\\'*\\[\" + \r\ncurrent.FromColumn.Name + \"\\]\\s*,\\s*\\'*\" +\r\ncurrent.ToTable.Name + \"\\'*\\[\" +\r\ncurrent.ToColumn.Name + \"\\]\"))\r\nor\r\nModel.AllCalculationItems.Any(RegEx.IsMatch(Expression,\r\n\"(?i)USERELATIONSHIP\\s*\\(\\s*\\'*\" +\r\ncurrent.FromTable.Name + \"\\'*\\[\" + \r\ncurrent.FromColumn.Name + \"\\]\\s*,\\s*\\'*\" +\r\ncurrent.ToTable.Name + \"\\'*\\[\" +\r\ncurrent.ToColumn.Name + \"\\]\"))\r\n)",
+    "Expression": "IsActive == false\r\nand not\r\n(\r\n    Model.AllMeasures.Any(\r\n        RegEx.IsMatch(Expression, \"(?i)USERELATIONSHIP\\s*\\(\\s*'*\" + RegEx.Escape(current.FromTable.Name) + \"'*\\s*\\[\" + RegEx.Escape(current.FromColumn.Name) + \"\\]\\s*,\\s*'*\" + RegEx.Escape(current.ToTable.Name) + \"'*\\s*\\[\" + RegEx.Escape(current.ToColumn.Name) + \"\\]\")\r\n        or RegEx.IsMatch(Expression, \"(?i)USERELATIONSHIP\\s*\\(\\s*'*\" + RegEx.Escape(current.ToTable.Name) + \"'*\\s*\\[\" + RegEx.Escape(current.ToColumn.Name) + \"\\]\\s*,\\s*'*\" + RegEx.Escape(current.FromTable.Name) + \"'*\\s*\\[\" + RegEx.Escape(current.FromColumn.Name) + \"\\]\")\r\n    )\r\n    or Model.AllCalculationItems.Any(\r\n        RegEx.IsMatch(Expression, \"(?i)USERELATIONSHIP\\s*\\(\\s*'*\" + RegEx.Escape(current.FromTable.Name) + \"'*\\s*\\[\" + RegEx.Escape(current.FromColumn.Name) + \"\\]\\s*,\\s*'*\" + RegEx.Escape(current.ToTable.Name) + \"'*\\s*\\[\" + RegEx.Escape(current.ToColumn.Name) + \"\\]\")\r\n        or RegEx.IsMatch(Expression, \"(?i)USERELATIONSHIP\\s*\\(\\s*'*\" + RegEx.Escape(current.ToTable.Name) + \"'*\\s*\\[\" + RegEx.Escape(current.ToColumn.Name) + \"\\]\\s*,\\s*'*\" + RegEx.Escape(current.FromTable.Name) + \"'*\\s*\\[\" + RegEx.Escape(current.FromColumn.Name) + \"\\]\")\r\n    )\r\n)",
     "CompatibilityLevel": 1200
   },
   {
@@ -347,7 +347,7 @@
     "Description": "Instead of using the '1-(x/y)' or '1+(x/y)' syntax to achieve a percentage calculation, use the basic DAX functions (as shown below). Using the improved syntax will generally improve the performance. The '1+/-...' syntax always returns a value whereas the solution without the '1+/-...' does not (as the value may be 'blank'). Therefore the '1+/-...' syntax may return more rows/columns which may result in a slower query speed.\r\n\r\nLet's clarify with an example:\r\n\r\nAvoid this: 1 - SUM ( 'Sales'[CostAmount] ) / SUM( 'Sales'[SalesAmount] )\r\nBetter: DIVIDE ( SUM ( 'Sales'[SalesAmount] ) - SUM ( 'Sales'[CostAmount] ), SUM ( 'Sales'[SalesAmount] ) )\r\nBest: VAR x = SUM ( 'Sales'[SalesAmount] ) RETURN DIVIDE ( x - SUM ( 'Sales'[CostAmount] ), x )",
     "Severity": 2,
     "Scope": "Measure, CalculatedColumn, CalculationItem",
-    "Expression": "RegEx.IsMatch(Expression,\"[0-9]+\\s*[-+]\\s*[\\(]*\\s*(?i)SUM\\s*\\(\\s*\\'*[A-Za-z0-9 _]+\\'*\\s*\\[[A-Za-z0-9 _]+\\]\\s*\\)\\s*\\/\")\r\nor\r\nRegEx.IsMatch(Expression,\"[0-9]+\\s*[-+]\\s*(?i)DIVIDE\\s*\\(\")",
+    "Expression": "RegEx.IsMatch(Expression,\"[0-9]+\\s*[-+]\\s*[\\(\\s*]*\\s*(?i)SUM\\s*\\(\\s*'*[A-Za-z0-9 _]+'*\\s*\\[[A-Za-z0-9 _]+\\]\\s*\\)*\\s*\\/\")\ror\r\nRegEx.IsMatch(Expression,\"[0-9]+\\s*[-+]\\s*(?i)DIVIDE\\s*\\(\")",
     "CompatibilityLevel": 1200
   },
   {
@@ -387,7 +387,7 @@
     "Description": "Power BI does not support provider (a.k.a. 'legacy') partitions which reference structured data sources. Partitions which reference structured data sources must use the M-language. Otherwise, 'provider' partitions must reference a 'provider' data source. This can be resolved by converting the structured data source into a provider data source (see 2nd reference link below).\r\n\r\nReference: https://docs.microsoft.com/power-bi/admin/service-premium-connect-tools#data-source-declaration\r\nReference: https://www.elegantbi.com/post/convertdatasources",
     "Severity": 2,
     "Scope": "Partition",
-    "Expression": "SourceType == \"Query\"\r\nand\r\nDataSource.Type == \"Structured\"",
+    "Expression": "SourceType == \"Query\"\rand\r\nDataSource.Type == \"Structured\"",
     "CompatibilityLevel": 1200
   },
   {
@@ -397,7 +397,7 @@
     "Description": "The USERELATIONSHIP function may not be used against a table which also leverages row-level security (RLS). This will generate an error when using the particular measure in a visual. This rule will highlight the table which is used in a measure's USERELATIONSHIP function as well as RLS.\r\n\r\nReference: https://blog.crossjoin.co.uk/2013/05/10/userelationship-and-tabular-row-security/",
     "Severity": 3,
     "Scope": "Table, CalculatedTable",
-    "Expression": "Model.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)USERELATIONSHIP\\s*\\(\\s*.+?(?=])\\]\\s*,\\s*'*\" + current.Name + \"'*\\[\"))\r\nand\r\nRowLevelSecurity.Any(it <> null)",
+    "Expression": "Model.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)USERELATIONSHIP\\s*\\([^)]*\" + RegEx.Escape(current.Name) + \"('?\\[)[^)]*\\)\"))\r\nand\r\nRowLevelSecurity.Any(it <> null)",
     "CompatibilityLevel": 1200
   },
   {
@@ -439,8 +439,8 @@
     "Description": "In order to avoid errors, ensure that attribute hierarchies are enabled if a column is used for sorting another column, used in a hierarchy, used in variations, or is sorted by another column.",
     "Severity": 3,
     "Scope": "DataColumn, CalculatedColumn, CalculatedTableColumn",
-    "Expression": "IsAvailableInMDX = false\r\n\r\nand\r\n(\r\nUsedInSortBy.Any()\r\nor\r\nUsedInHierarchies.Any()\r\nor\r\nUsedInVariations.Any()\r\nor\r\nSortByColumn != null\r\n)",
-	"FixExpression": "IsAvailableInMDX = true",
+    "Expression": "not IsAvailableInMDX\r\n\r\nand\r\n(\r\nUsedInSortBy.Any()\r\nor\r\nUsedInHierarchies.Any()\r\nor\r\nUsedInVariations.Any()\r\nor\r\nSortByColumn != null\r\n)",
+    "FixExpression": "IsAvailableInMDX = true",
     "CompatibilityLevel": 1200
   },
   {
@@ -450,7 +450,7 @@
     "Description": "Hidden columns that are not referenced by any DAX expressions, relationships, hierarchy levels or Sort By-properties should be removed.",
     "Severity": 2,
     "Scope": "DataColumn, CalculatedColumn, CalculatedTableColumn",
-    "Expression": "(IsHidden or Table.IsHidden)\n\n\r\nand ReferencedBy.Count = 0\r\n\n\nand (not UsedInRelationships.Any())\n\n\r\nand (not UsedInSortBy.Any())\n\n\r\nand (not UsedInHierarchies.Any())\n\n\r\nand (not Table.RowLevelSecurity.Any(\nit <> null and it.IndexOf(\"[\" + current.Name + \"]\", \"OrdinalIgnoreCase\") >= 0\n))\n\n and (not Model.Roles.Any(RowLevelSecurity.Any(\nit <> null and \n(\nit.IndexOf(current.Table.Name + \"[\" + current.Name + \"]\", \"OrdinalIgnoreCase\") >= 0 or\n it.IndexOf(\"'\" + current.Table.Name + \"'[\" + current.Name + \"]\", \"OrdinalIgnoreCase\") >= 0\n )\n)))\r\nand not (\r\nObjectLevelSecurity.Any(it.ToString() == \"None\"))\r\nand not (\r\nTable.ObjectLevelSecurity.Any(it.ToString() == \"None\"))",
+    "Expression": "(IsHidden or Table.IsHidden)\n\n\rand ReferencedBy.Count = 0\r\n\n\nand (not UsedInRelationships.Any())\n\n\rand (not UsedInSortBy.Any())\n\n\rand (not UsedInHierarchies.Any())\n\n\rand (not Table.RowLevelSecurity.Any(\nit <> null and it.IndexOf(\"[\" + current.Name + \"]\", \"OrdinalIgnoreCase\") >= 0\n))\n\n and (not Model.Roles.Any(RowLevelSecurity.Any(\nit <> null and \n(\nit.IndexOf(current.Table.Name + \"[\" + current.Name + \"]\", \"OrdinalIgnoreCase\") >= 0 or\n it.IndexOf(\"'\" + current.Table.Name + \"'[\" + current.Name + \"]\", \"OrdinalIgnoreCase\") >= 0\n )\n)))\rand not (\r\nObjectLevelSecurity.Any(it.ToString() == \"None\"))\rand not (\r\nTable.ObjectLevelSecurity.Any(it.ToString() == \"None\"))",
     "FixExpression": "Delete()",
     "CompatibilityLevel": 1200
   },
@@ -461,7 +461,7 @@
     "Description": "Hidden measures that are not referenced by any DAX expressions should be removed for maintainability",
     "Severity": 2,
     "Scope": "Measure",
-    "Expression": "(Table.IsHidden or IsHidden) \r\nand ReferencedBy.Count = 0",
+    "Expression": "(Table.IsHidden or IsHidden) \rand ReferencedBy.Count = 0",
     "FixExpression": "Delete()",
     "CompatibilityLevel": 1200
   },
@@ -482,7 +482,7 @@
     "Description": "Data sources which are not referenced by any partitions may be removed.",
     "Severity": 1,
     "Scope": "ProviderDataSource, StructuredDataSource",
-    "Expression": "UsedByPartitions.Count() == 0\r\nand not Model.Tables.Any(SourceExpression.Contains(OuterIt.Name))\r\nand not Model.AllPartitions.Any(Query.Contains(OuterIt.Name))",
+    "Expression": "UsedByPartitions.Count() == 0\rand not Model.Tables.Any(SourceExpression.Contains(OuterIt.Name))\rand not Model.AllPartitions.Any(Query.Contains(OuterIt.Name))",
     "FixExpression": "Delete()",
     "CompatibilityLevel": 1200
   },
@@ -514,7 +514,7 @@
     "Description": "Add descriptions to objects. These descriptions are shown on hover within the Field List in Power BI Desktop. Additionally, you can leverage these descriptions to create an automated data dictionary (see link below).\r\nReference: https://www.elegantbi.com/post/datadictionary",
     "Severity": 1,
     "Scope": "Table, Measure, DataColumn, CalculatedColumn, CalculatedTable, CalculatedTableColumn, CalculationGroup",
-    "Expression": "string.IsNullOrWhitespace(Description)\r\nand\r\nIsHidden == false",
+    "Expression": "string.IsNullOrWhitespace(Description)\rand\r\nIsHidden == false",
     "CompatibilityLevel": 1200
   },
   {
@@ -556,7 +556,7 @@
     "Description": "Tabs, line breaks, etc.",
     "Severity": 2,
     "Scope": "Model, Table, Measure, Hierarchy, Perspective, Partition, DataColumn, CalculatedColumn, CalculatedTable, CalculatedTableColumn, CalculationGroup, CalculationItem",
-    "Expression": "Name.IndexOf(char(9)) > -1\r\nor\r\n\nName.IndexOf(char(10)) > -1 \r\nor\r\n\nName.IndexOf(char(13)) > -1",
+    "Expression": "Name.IndexOf(char(9)) > -1\ror\r\n\nName.IndexOf(char(10)) > -1 \ror\r\n\nName.IndexOf(char(13)) > -1",
     "CompatibilityLevel": 1200
   },
   {
@@ -576,8 +576,9 @@
     "Description": "Flags must be properly formatted as Yes/No as this is easier to read than using 0/1 integer values.",
     "Severity": 1,
     "Scope": "DataColumn, CalculatedColumn, CalculatedTableColumn",
-    "Expression": "(\nName.StartsWith(\"Is\") and \nDataType = \"Int64\" and \nnot (IsHidden or Table.IsHidden)\n) \r\nor\r\n\n(\nName.EndsWith(\" Flag\") and \nDataType <> \"String\" and \nnot (IsHidden or Table.IsHidden)\n)",
-    "CompatibilityLevel": 1200
+    "Expression": "(\r\n    (\r\n        Name.StartsWith(\"Is\") and \r\n        DataType = \"Int64\" and  \r\n        not (IsHidden or Table.IsHidden)\r\n    ) \r\n    or \r\n    (\r\n        Name.EndsWith(\" Flag\") and \r\n        DataType <> \"String\" and \r\n        not (IsHidden or Table.IsHidden)\r\n    )\r\n) \r\nand FormatString <> \"\"\"Yes\"\";;\"\"No\"\";\"",
+    "CompatibilityLevel": 1200,
+    "FixExpression": "FormatString = \"\\\"Yes\\\";;\\\"No\\\";\""
   },
   {
     "ID": "OBJECTS_SHOULD_NOT_START_OR_END_WITH_A_SPACE",
@@ -593,11 +594,11 @@
     "ID": "DATECOLUMN_FORMATSTRING",
     "Name": "[Formatting] Provide format string for \"Date\" columns",
     "Category": "Formatting",
-    "Description": "Columns of type \"DateTime\" that have \"Month\" in their names should be formatted as \"mm/dd/yyyy\".",
+    "Description": "Columns of type \"DateTime\" that have \"Date\" in their names should be formatted as \"mm/dd/yyyy\".",
     "Severity": 1,
     "Scope": "DataColumn, CalculatedColumn, CalculatedTableColumn",
-    "Expression": "Name.IndexOf(\"Date\", \"OrdinalIgnoreCase\") >= 0 \r\nand \r\nDataType = \"DateTime\" \r\nand \r\nFormatString <> \"mm/dd/yyyy\"",
-    "FixExpression": "FormatString = \"mm/dd/yyyy\"",
+    "Expression": "Name.IndexOf(\"Date\", \"OrdinalIgnoreCase\") >= 0 \rand \r\nDataType = \"DateTime\" \rand \r\nFormatString <> \"yyyy-mm-dd\"",
+    "FixExpression": "FormatString = \"yyyy-mm-dd\"",
     "CompatibilityLevel": 1200
   },
   {
@@ -618,7 +619,7 @@
     "Description": "Visible measures should have their format string property assigned",
     "Severity": 3,
     "Scope": "Measure",
-    "Expression": "not IsHidden \r\nand not Table.IsHidden \r\nand string.IsNullOrWhitespace(FormatString) \r\nand string.IsNullOrWhitespace(FormatStringExpression)\r\n    ",
+    "Expression": "not IsHidden \r\nand not Table.IsHidden \r\nand string.IsNullOrWhitespace(FormatString) \r\nand string.IsNullOrWhitespace(FormatStringExpression)\r\nand DataType <> \"String\"",
     "CompatibilityLevel": 1200
   },
   {
@@ -628,7 +629,7 @@
     "Description": "Numeric columns (integer, decimal, double) should have their SummarizeBy property set to \"None\" to avoid accidental summation in Power BI (create measures instead).",
     "Severity": 3,
     "Scope": "DataColumn, CalculatedColumn, CalculatedTableColumn",
-    "Expression": "(\r\nDataType = \"Int64\"\r\nor \r\nDataType=\"Decimal\" \r\nor \r\nDataType=\"Double\"\r\n)\n\r\nand \r\nSummarizeBy <> \"None\"\r\n\nand not (IsHidden or Table.IsHidden)",
+    "Expression": "(\r\nDataType = \"Int64\"\ror \r\nDataType=\"Decimal\" \ror \r\nDataType=\"Double\"\r\n)\n\rand \r\nSummarizeBy <> \"None\"\r\n\nand not (IsHidden or Table.IsHidden)",
     "FixExpression": "SummarizeBy = AggregateFunction.None",
     "CompatibilityLevel": 1200
   },
@@ -638,7 +639,7 @@
     "Category": "Formatting",
     "Severity": 2,
     "Scope": "Measure",
-    "Expression": "FormatString.Contains(\"%\") and FormatString <> \"#,0.0%;-#,0.0%;#,0.0%\"",
+    "Expression": "FormatString.Contains(\"%\") and FormatString <> \"#,0.0%\\u003B-#,0.0%\\u003B#,0.0%\"",
     "FixExpression": "FormatString = \"#,0.0%\\u003B-#,0.0%\\u003B#,0.0%\"",
     "CompatibilityLevel": 1200
   },
@@ -648,7 +649,7 @@
     "Category": "Formatting",
     "Severity": 2,
     "Scope": "Measure",
-    "Expression": "not FormatString.Contains(\"$\") and not FormatString.Contains(\"%\") and not (FormatString = \"#,0\" or FormatString = \"#,0.0\")",
+    "Expression": "(DataType = \"Int64\" or DataType = \"Decimal\" or DataType = \"Double\") and not FormatString.Contains(\"$\") and not FormatString.Contains(\"%\") and not (FormatString = \"#,0\" or FormatString = \"#,0.0\")",
     "FixExpression": "FormatString = \"#,0\"",
     "CompatibilityLevel": 1200
   },
@@ -669,7 +670,7 @@
     "Description": "Add Data Category property for appropriate columns.\r\n\r\nReference: https://docs.microsoft.com/power-bi/transform-model/desktop-data-categorization",
     "Severity": 1,
     "Scope": "DataColumn, CalculatedColumn, CalculatedTableColumn",
-    "Expression": "string.IsNullOrWhiteSpace(DataCategory)\r\n&&\r\n(\r\n    (\r\n        (\r\n            Name.ToLower().Contains(\"country\")\r\n            || Name.ToLower().Contains(\"continent\")\r\n            || Name.ToLower().Contains(\"city\")\r\n        )\r\n        && DataType == DataType.String\r\n    )\r\n    ||\r\n    (\r\n        (\r\n            Name.ToLower() == \"latitude\"\r\n            || Name.ToLower() == \"longitude\"\r\n        )\r\n        &&\r\n        (\r\n            DataType == DataType.Decimal\r\n            || DataType == DataType.Double\r\n        )\r\n    )\r\n)\r\n",
+    "Expression": "string.IsNullOrWhitespace(DataCategory)\r\n&&\r\n(\r\n    (\r\n        (\r\n            Name.ToLower().Contains(\"country\")\r\n            || Name.ToLower().Contains(\"continent\")\r\n            || Name.ToLower().Contains(\"city\")\r\n        )\r\n        && DataType == DataType.String\r\n    )\r\n    ||\r\n    (\r\n        (\r\n            Name.ToLower() == \"latitude\"\r\n            || Name.ToLower() == \"longitude\"\r\n        )\r\n        &&\r\n        (\r\n            DataType == DataType.Decimal\r\n            || DataType == DataType.Double\r\n        )\r\n    )\r\n)\r\n",
     "CompatibilityLevel": 1200
   },
   {
@@ -679,7 +680,7 @@
     "Description": "Foreign keys should always be hidden.",
     "Severity": 2,
     "Scope": "DataColumn, CalculatedColumn, CalculatedTableColumn",
-    "Expression": "UsedInRelationships.Any(FromColumn.Name == current.Name and FromCardinality == \"Many\")\n\r\nand\r\n\nIsHidden == false",
+    "Expression": "UsedInRelationships.Any(FromTable.Name == current.Table.Name and FromColumn.Name == current.Name and not (IsHidden or Table.IsHidden))",
     "FixExpression": "IsHidden = true",
     "CompatibilityLevel": 1200
   },
@@ -701,7 +702,7 @@
     "Description": "It is a best practice to hide fact table columns that are used for aggregation in measures.",
     "Severity": 2,
     "Scope": "DataColumn, CalculatedColumn, CalculatedTableColumn",
-    "Expression": "(\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)COUNT\\s*\\(\\s*\\'*\" + outerit.Table.Name + \"\\'*\\[\" + outerit.Name + \"\\]\\s*\\)\"))\r\n\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)COUNTBLANK\\s*\\(\\s*\\'*\" + outerit.Table.Name + \"\\'*\\[\" + outerit.Name + \"\\]\\s*\\)\"))\r\n\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)SUM\\s*\\(\\s*\\'*\" + outerit.Table.Name + \"\\'*\\[\" + outerit.Name + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)AVERAGE\\s*\\(\\s*\\'*\" + outerit.Table.Name + \"\\'*\\[\" + outerit.Name + \"\\]\\s*\\)\"))\r\n\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)VALUES\\s*\\(\\s*\\'*\" + outerit.Table.Name + \"\\'*\\[\" + outerit.Name + \"\\]\\s*\\)\"))\r\n\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)DISTINCT\\s*\\(\\s*\\'*\" + outerit.Table.Name + \"\\'*\\[\" + outerit.Name + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)DISTINCTCOUNT\\s*\\(\\s*\\'*\" + outerit.Table.Name + \"\\'*\\[\" + outerit.Name + \"\\]\\s*\\)\"))\r\n\nor\n\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)MIN\\s*\\(\\s*\\'*\" + outerit.Table.Name + \"\\'*\\[\" + outerit.Name + \"\\]\\s*\\)\"))\r\n\nor\n\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)MAX\\s*\\(\\s*\\'*\" + outerit.Table.Name + \"\\'*\\[\" + outerit.Name + \"\\]\\s*\\)\"))\r\n\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)COUNTA\\s*\\(\\s*\\'*\" + outerit.Table.Name + \"\\'*\\[\" + outerit.Name + \"\\]\\s*\\)\"))\n\r\n\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)AVERAGEA\\s*\\(\\s*\\'*\" + outerit.Table.Name + \"\\'*\\[\" + outerit.Name + \"\\]\\s*\\)\"))\r\n\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)MAXA\\s*\\(\\s*\\'*\" + outerit.Table.Name + \"\\'*\\[\" + outerit.Name + \"\\]\\s*\\)\"))\r\n\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)MINA\\s*\\(\\s*\\'*\" + outerit.Table.Name + \"\\'*\\[\" + outerit.Name + \"\\]\\s*\\)\"))\r\n)\r\n\nand IsHidden == false\r\n\nand (DataType == \"Int64\" || DataType == \"Decimal\" || DataType == \"Double\")",
+    "Expression": "(\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)COUNT\\s*\\(\\s*'*\" + RegEx.Escape(outerit.Table.Name) + \"'*\\s*\\[\" + RegEx.Escape(outerit.Name) + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)COUNTBLANK\\s*\\(\\s*'*\" + RegEx.Escape(outerit.Table.Name) + \"'*\\s*\\[\" + RegEx.Escape(outerit.Name) + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)SUM\\s*\\(\\s*'*\" + RegEx.Escape(outerit.Table.Name) + \"'*\\s*\\[\" + RegEx.Escape(outerit.Name) + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)AVERAGE\\s*\\(\\s*'*\" + RegEx.Escape(outerit.Table.Name) + \"'*\\s*\\[\" + RegEx.Escape(outerit.Name) + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)VALUES\\s*\\(\\s*'*\" + RegEx.Escape(outerit.Table.Name) + \"'*\\s*\\[\" + RegEx.Escape(outerit.Name) + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)DISTINCT\\s*\\(\\s*'*\" + RegEx.Escape(outerit.Table.Name) + \"'*\\s*\\[\" + RegEx.Escape(outerit.Name) + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)DISTINCTCOUNT\\s*\\(\\s*'*\" + RegEx.Escape(outerit.Table.Name) + \"'*\\s*\\[\" + RegEx.Escape(outerit.Name) + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)MIN\\s*\\(\\s*'*\" + RegEx.Escape(outerit.Table.Name) + \"'*\\s*\\[\" + RegEx.Escape(outerit.Name) + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)MAX\\s*\\(\\s*'*\" + RegEx.Escape(outerit.Table.Name) + \"'*\\s*\\[\" + RegEx.Escape(outerit.Name) + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)COUNTA\\s*\\(\\s*'*\" + RegEx.Escape(outerit.Table.Name) + \"'*\\s*\\[\" + RegEx.Escape(outerit.Name) + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)AVERAGEA\\s*\\(\\s*'*\" + RegEx.Escape(outerit.Table.Name) + \"'*\\s*\\[\" + RegEx.Escape(outerit.Name) + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)MAXA\\s*\\(\\s*'*\" + RegEx.Escape(outerit.Table.Name) + \"'*\\s*\\[\" + RegEx.Escape(outerit.Name) + \"\\]\\s*\\)\"))\r\nor\r\nReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression,\"(?i)MINA\\s*\\(\\s*'*\" + RegEx.Escape(outerit.Table.Name) + \"'*\\s*\\[\" + RegEx.Escape(outerit.Name) + \"\\]\\s*\\)\"))\r\n)\r\nand IsHidden == false\r\nand (DataType == \"Int64\" || DataType == \"Decimal\" || DataType == \"Double\")",
     "FixExpression": "IsHidden = true",
     "CompatibilityLevel": 1200
   },
@@ -723,7 +724,25 @@
     "Scope": "DataColumn, CalculatedColumn, CalculatedTableColumn",
     "Expression": "Name.ToUpper().Contains(\"MONTH\")\r\nand\r\n! Name.ToUpper().Contains(\"MONTHS\") \r\nand \r\n\n\nDataType == DataType.String \r\nand \r\nSortByColumn == null",
     "CompatibilityLevel": 1200
+  },
+  {
+    "ID": "NO_CALCULATED_COLUMNS",
+    "Name": "[Performance] No DAX Columns - Eliminate the use of calculated columns",
+    "Category": "Performance",
+    "Description": "Eliminate the use of Calculated Columns. In addition to SQLBI's guidance that Calculated columns do not compress as well as data columns so they take up more memory, slow down processing times for both the table as well as process recalc. Offload calculated column logic to your data warehouse and turn these calculated columns into data columns. Reference: https://www.youtube.com/watch?v=oKuO0_17Y5o",
+    "Severity": 2,
+    "Scope": "Model",
+    "Expression": "AllColumns.Where(Type.ToString() == \"Calculated\").Count() > 0",
+    "CompatibilityLevel": 1200
+  },
+  {
+    "ID": "REDUCE_NUMBER_OF_MEASURES",
+    "Name": "[Maintenance] Reduce number of measures",
+    "Category": "Maintenance",
+    "Description": "If you have an excessive number of measures, you should attempt to reduce the number of measures by utilizing calculation groups or reviewing your model design.\r\nIf this is not possible, you should disable all BPA rules that iterate over the AllMeasures collection to avoid Tabular Editor freezing and becoming unresponsive.",
+    "Severity": 1,
+    "Scope": "Model",
+    "Expression": "Model.AllMeasures.Count() > 1500",
+    "CompatibilityLevel": 1200
   }
-
 ]
-
